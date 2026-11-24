@@ -5,7 +5,7 @@ import type { ChatStorage, StoredFile } from './contract.js'
  * 存储层唯一实现：服务端。
  *
  * 会话与附件都落到后端，浏览器不再保存会话数据；
- * 旧的 IndexedDB 实现见 ./migrate.ts，只用于把本地历史一次性搬到服务端。
+ * 服务端实现：会话存 /api/sessions，附件存 /api/files。
  */
 
 const TOKEN_HEADER = 'X-Auth-Token'
