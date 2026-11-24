@@ -15,6 +15,17 @@ deploy/     docker compose + nginx 配置模板
 
 ---
 
+## 效果
+
+| 桌面 | 手机 |
+|---|---|
+| ![桌面](./docs/screenshots/desktop.png) | ![手机](./docs/screenshots/mobile.png) |
+
+界面就是官方那份：侧栏分组、消息操作、代码高亮、深度思考与智能搜索开关都在。
+右侧悬停才展开的消息导航条也是按官方产物里的精确数值实现的。
+
+---
+
 
 
 ## 做了什么
