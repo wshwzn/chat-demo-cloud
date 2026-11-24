@@ -1,0 +1,36 @@
+# 忽略规则（单仓）
+# 各子目录还有自己的 .gitignore，这里兜底覆盖构建产物和常见杂项
+
+# 依赖与构建产物
+node_modules/
+dist/
+build/
+target/
+.pnpm-store/
+.cache/
+
+# 安卓产物
+*.apk
+*.idsig
+*.keystore
+
+# 环境变量与密钥
+.env
+.env.*
+!.env.example
+
+# 部署时生成的运行数据
+deploy/data/
+
+# 后端运行时目录
+server/upload/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# 系统与日志
+.DS_Store
+Thumbs.db
+*.log

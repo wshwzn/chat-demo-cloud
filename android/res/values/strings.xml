@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DeepSeek</string>
+    <!-- 改成你自己部署的地址（注意结尾斜杠） -->
+    <string name="server_url">https://your-domain.example.com/</string>
+</resources>

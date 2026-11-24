@@ -1,0 +1,34 @@
+server:
+  port: 8080
+  tomcat:
+    # 会话 doc 可能是几 MB 的 JSON，放宽 Tomcat 的请求吞吐上限
+    max-swallow-size: 64MB
+
+spring:
+  application:
+    name: chat-demo-server
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/chat_demo?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    multipart:
+      max-file-size: 64MB
+      max-request-size: 64MB
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    banner: false
+
+app:
+  # 固定口令鉴权；为空表示不校验（仅本机调试用）
+  token: dev-token
+  # 附件原件存放目录
+  storage-dir: ./upload
+
+logging:
+  level:
+    com.example.chatdemo: info

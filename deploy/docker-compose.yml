@@ -1,0 +1,54 @@
+# 一键起 MySQL + 后端。前端是纯静态文件，交给 nginx 直接托管。
+#
+# 用法：
+#   1. 先构建后端 jar：  cd ../server && mvn -DskipTests package
+#   2. 复制环境变量：    cp ../.env.example ../.env  然后填值
+#   3. 启动：            docker compose up -d
+#
+# 后端只监听 127.0.0.1，由 nginx 反代并注入口令，不要直接对公网开放。
+
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?请在 .env 里设置}
+      MYSQL_DATABASE: ${DB_NAME:-chat_demo}
+      MYSQL_USER: ${DB_USER:-chatdemo}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?请在 .env 里设置}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+      # 首次启动自动建表（含 ngram 全文索引）
+      - ../server/src/main/resources/db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    # 不需要从公网访问数据库，如需本地连调试再打开
+    # ports:
+    #   - "127.0.0.1:3306:3306"
+
+  backend:
+    image: eclipse-temurin:21-jre
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${BACKEND_PORT:-8080}:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${DB_NAME:-chat_demo}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-chatdemo}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:?请在 .env 里设置}
+      APP_TOKEN: ${APP_TOKEN:?请在 .env 里设置}
+      APP_STORAGE_DIR: /data/upload
+      # 小内存机器建议显式限制堆，默认的 1/4 物理内存可能过大
+      JAVA_TOOL_OPTIONS: -Xmx256m -XX:MaxMetaspaceSize=160m -XX:+UseSerialGC
+    volumes:
+      - ../server/target/chat-demo-server-0.1.0.jar:/app/app.jar:ro
+      - ${UPLOAD_DIR:-./data/upload}:/data/upload
+    command: ["java", "-jar", "/app/app.jar"]

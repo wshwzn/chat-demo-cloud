@@ -1,0 +1,143 @@
+/* 尺寸与交互参数取自官方产物（scrollNav 系列类） */
+.nav {
+  position: fixed;
+  top: 50%;
+  right: 16px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  width: 34px;
+  height: 300px;
+  border-radius: 8px;
+  transform: translateY(-50%);
+  user-select: none;
+  transition: all 0.2s;
+}
+
+/* 毛玻璃胶囊背景 */
+.bg {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  z-index: -1;
+  width: 34px;
+  height: calc(100% - 8px);
+  max-height: calc(100% - 8px);
+  border-radius: 16px;
+  background-color: rgb(255 255 255 / 80%);
+  backdrop-filter: blur(5px);
+}
+
+:global(body[data-ds-dark-theme]) .bg {
+  background-color: rgb(21 21 23 / 60%);
+}
+
+/* 悬停时向左展开的面板 */
+.wrapper {
+  position: absolute;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: fit-content;
+  max-width: 240px;
+  max-height: 100%;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  pointer-events: none;
+  transition:
+    background 0.2s,
+    box-shadow 0.2s;
+}
+
+.show {
+  width: 240px;
+  pointer-events: auto;
+  border-color: var(--dsw-alias-border-inverted);
+  background: var(--dsw-alias-bg-layer-2);
+  box-shadow: var(--dsw-shadow-lv3);
+}
+
+.page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  max-height: 250px;
+  overflow-y: auto;
+  /* 官方值：上 15 / 右 0 / 下 15 / 左 24，右侧点点贴边、文字留出呼吸空间 */
+  padding: 15px 0 15px 24px;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.page::-webkit-scrollbar {
+  display: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  width: calc(100% - 6px);
+  height: 30px;
+  margin-right: 8px;
+  color: var(--dsw-alias-label-tertiary);
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.item:hover {
+  color: var(--dsw-alias-label-primary);
+}
+
+.item:hover .line {
+  background-color: var(--dsw-alias-label-primary);
+}
+
+.title {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-right: 12px;
+  overflow: hidden;
+  font: var(--dsw-font-xs-13);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transition:
+    opacity 0.1s,
+    color 0.2s;
+}
+
+.show .title {
+  opacity: 1;
+}
+
+.indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 20px;
+}
+
+.line {
+  width: 8px;
+  height: 2px;
+  border-radius: 4px;
+  background-color: var(--dsw-alias-border-l3);
+  transition: background-color 0.2s;
+}
+
+.item.active .title {
+  color: var(--dsw-alias-brand-text);
+  font-weight: 500;
+}
+
+.item.active .line {
+  background-color: var(--dsw-alias-brand-text);
+  transform: scale(1.5);
+}

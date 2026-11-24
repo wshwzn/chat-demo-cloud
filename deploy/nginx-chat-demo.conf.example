@@ -1,0 +1,25 @@
+# 放在站点配置的 proxy/ 目录（1Panel / 宝塔）或 server 块的 include 里。
+# 目的：浏览器只请求同源 /api，口令由 nginx 注入，公开的 JS 包里不含任何密钥。
+#
+# https 站点请把 proxy_pass 改成 http://127.0.0.1:8080（按实际端口）。
+
+location ^~ /api {
+    proxy_pass http://127.0.0.1:8080;
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Port $server_port;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $http_connection;
+
+    # 关键：口令在这里注入。客户端伪造同名头会被这一行覆盖，
+    # 直接访问后端端口（不经反代）则无法通过校验。
+    # 值必须与后端 app.token / APP_TOKEN 一致。
+    proxy_set_header X-Auth-Token "REPLACE_WITH_YOUR_TOKEN";
+
+    proxy_http_version 1.1;
+    proxy_ssl_server_name off;
+    proxy_ssl_name $proxy_host;
+}
